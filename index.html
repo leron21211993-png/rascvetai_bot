@@ -2,319 +2,126 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>🌸 Расцветай - Магазин цветов</title>
-    <!-- Telegram WebApp SDK -->
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            -webkit-tap-highlight-color: transparent;
-        }
-        
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: linear-gradient(135deg, #fff5f7 0%, #f8f9ff 100%);
-            min-height: 100vh;
-            padding: 0;
-            color: #333;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: Arial, sans-serif; background: #f9f0ff; padding: 20px; }
         
         .container {
-            max-width: 100%;
+            max-width: 400px;
             margin: 0 auto;
             background: white;
-            min-height: 100vh;
-            position: relative;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
         }
         
-        /* Шапка */
         .header {
-            background: linear-gradient(90deg, #ff6b6b 0%, #ff8e8e 100%);
+            background: linear-gradient(90deg, #ff6b6b, #ff8e8e);
             color: white;
-            padding: 25px 20px;
+            padding: 25px;
             text-align: center;
-            border-radius: 0 0 25px 25px;
-            box-shadow: 0 4px 20px rgba(255, 107, 107, 0.2);
         }
         
-        .header h1 {
-            font-size: 28px;
-            margin-bottom: 8px;
-            font-weight: 700;
-        }
+        .header h1 { font-size: 24px; margin-bottom: 5px; }
+        .header p { opacity: 0.9; }
         
-        .header p {
-            font-size: 16px;
-            opacity: 0.95;
-            font-weight: 400;
-        }
+        .catalog-section { padding: 20px; }
+        .order-form { padding: 20px; display: none; }
         
-        /* Каталог */
-        .catalog-section {
-            padding: 20px;
-        }
-        
-        .section-title {
-            font-size: 22px;
-            color: #333;
-            margin-bottom: 20px;
-            font-weight: 600;
-        }
-        
-        .catalog-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 15px;
-        }
-        
-        /* Карточка букета */
         .flower-card {
             background: white;
-            border-radius: 18px;
-            overflow: hidden;
-            box-shadow: 0 6px 20px rgba(0,0,0,0.08);
-            transition: all 0.3s ease;
-            cursor: pointer;
-            border: 1px solid #f0f0f0;
+            border-radius: 15px;
+            padding: 15px;
+            margin-bottom: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+            border: 2px solid #ff6b6b;
         }
         
-        .flower-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 12px 25px rgba(0,0,0,0.12);
+        .flower-name { 
+            font-size: 18px; 
+            font-weight: bold; 
+            color: #333; 
+            margin-bottom: 5px; 
         }
         
-        .flower-image {
-            height: 140px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 60px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        .flower-desc { 
+            color: #666; 
+            font-size: 14px; 
+            margin-bottom: 10px; 
         }
         
-        .flower-info {
-            padding: 16px;
-        }
-        
-        .flower-name {
-            font-size: 17px;
-            font-weight: 600;
-            color: #222;
-            margin-bottom: 6px;
-            line-height: 1.3;
-        }
-        
-        .flower-desc {
-            font-size: 13px;
-            color: #666;
-            margin-bottom: 10px;
-            line-height: 1.4;
-            min-height: 36px;
-        }
-        
-        .flower-footer {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-top: 10px;
-        }
-        
-        .flower-price {
-            color: #ff6b6b;
-            font-size: 20px;
-            font-weight: 700;
+        .flower-price { 
+            color: #ff6b6b; 
+            font-size: 20px; 
+            font-weight: bold; 
+            margin-bottom: 10px; 
         }
         
         .select-btn {
             background: #ff6b6b;
             color: white;
             border: none;
-            padding: 8px 16px;
+            padding: 10px 20px;
             border-radius: 10px;
-            font-size: 14px;
-            font-weight: 600;
+            font-weight: bold;
             cursor: pointer;
-            transition: background 0.3s;
-        }
-        
-        .select-btn:hover {
-            background: #ff5252;
-        }
-        
-        /* Форма заказа */
-        .order-form {
-            padding: 20px;
-            display: none;
+            width: 100%;
         }
         
         .back-btn {
             background: #667eea;
             color: white;
             border: none;
-            padding: 12px 24px;
-            border-radius: 12px;
-            font-size: 16px;
-            font-weight: 600;
-            cursor: pointer;
-            margin-bottom: 25px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-        
-        .selected-item {
-            background: linear-gradient(135deg, #fdfcfb 0%, #f9f9f9 100%);
-            padding: 20px;
-            border-radius: 16px;
-            margin-bottom: 25px;
-            border: 2px solid #667eea;
-        }
-        
-        .selected-title {
-            font-size: 16px;
-            color: #667eea;
-            font-weight: 600;
-            margin-bottom: 8px;
-        }
-        
-        .selected-name {
-            font-size: 20px;
-            font-weight: 700;
-            color: #333;
-            margin-bottom: 5px;
-        }
-        
-        .selected-price {
-            font-size: 24px;
-            color: #ff6b6b;
-            font-weight: 800;
-        }
-        
-        .form-group {
+            padding: 10px;
+            border-radius: 10px;
             margin-bottom: 20px;
-        }
-        
-        .form-label {
-            display: block;
-            font-size: 15px;
-            font-weight: 600;
-            color: #444;
-            margin-bottom: 8px;
-        }
-        
-        .form-input {
+            cursor: pointer;
             width: 100%;
-            padding: 14px 16px;
-            border: 2px solid #e1e5e9;
-            border-radius: 12px;
-            font-size: 16px;
-            background: #f8fafc;
-            transition: border 0.3s;
         }
         
-        .form-input:focus {
-            outline: none;
-            border-color: #667eea;
-            background: white;
+        .form-group { margin-bottom: 15px; }
+        
+        label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 5px;
+            color: #333;
+        }
+        
+        input, textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            font-size: 16px;
         }
         
         .submit-btn {
-            background: linear-gradient(90deg, #ff6b6b 0%, #ff8e8e 100%);
+            background: linear-gradient(90deg, #ff6b6b, #ff8e8e);
             color: white;
             border: none;
-            padding: 18px;
-            border-radius: 14px;
+            padding: 15px;
+            border-radius: 10px;
             font-size: 18px;
-            font-weight: 700;
+            font-weight: bold;
             cursor: pointer;
             width: 100%;
             margin-top: 10px;
-            transition: transform 0.2s;
         }
         
-        .submit-btn:hover {
-            transform: scale(0.98);
-        }
-        
-        .submit-btn:disabled {
-            opacity: 0.6;
-            cursor: not-allowed;
-        }
-        
-        /* Уведомления */
         .notification {
             position: fixed;
             top: 20px;
             right: 20px;
-            padding: 15px 20px;
-            border-radius: 12px;
+            background: #4CAF50;
             color: white;
-            font-weight: 600;
+            padding: 15px 20px;
+            border-radius: 10px;
+            font-weight: bold;
             z-index: 1000;
-            animation: slideIn 0.3s ease;
-            max-width: 350px;
-            box-shadow: 0 6px 20px rgba(0,0,0,0.15);
-        }
-        
-        .notification.success {
-            background: linear-gradient(90deg, #4CAF50 0%, #8BC34A 100%);
-        }
-        
-        .notification.error {
-            background: linear-gradient(90deg, #f44336 0%, #ff5252 100%);
-        }
-        
-        .notification.warning {
-            background: linear-gradient(90deg, #FF9800 0%, #FFC107 100%);
-        }
-        
-        @keyframes slideIn {
-            from {
-                transform: translateX(100%);
-                opacity: 0;
-            }
-            to {
-                transform: translateX(0);
-                opacity: 1;
-            }
-        }
-        
-        /* Адаптив */
-        @media (max-width: 480px) {
-            .catalog-grid {
-                grid-template-columns: 1fr;
-            }
-            
-            .header {
-                padding: 20px 15px;
-            }
-            
-            .header h1 {
-                font-size: 24px;
-            }
-            
-            .flower-image {
-                height: 120px;
-                font-size: 50px;
-            }
-        }
-        
-        /* Лоадер */
-        .loader {
-            display: inline-block;
-            width: 20px;
-            height: 20px;
-            border: 3px solid rgba(255,255,255,.3);
-            border-radius: 50%;
-            border-top-color: white;
-            animation: spin 1s ease-in-out infinite;
-        }
-        
-        @keyframes spin {
-            to { transform: rotate(360deg); }
         }
     </style>
 </head>
@@ -323,45 +130,43 @@
         <!-- Шапка -->
         <div class="header">
             <h1>🌸 Расцветай</h1>
-            <p>Доставка свежих букетов 24/7</p>
+            <p>Доставка свежих букетов</p>
         </div>
         
         <!-- Каталог -->
         <section id="catalog" class="catalog-section">
-            <h2 class="section-title">Выберите букет</h2>
-            <div class="catalog-grid" id="flowersGrid">
-                <!-- Букеты загружаются через JS -->
-            </div>
+            <h2 style="margin-bottom: 15px;">Выберите букет:</h2>
+            <div id="flowersGrid"></div>
         </section>
         
         <!-- Форма заказа -->
         <section id="orderForm" class="order-form">
             <button class="back-btn" onclick="showCatalog()">← Назад к каталогу</button>
             
-            <div class="selected-item">
-                <div class="selected-title">Вы выбрали:</div>
-                <div class="selected-name" id="selectedProduct">Букет не выбран</div>
-                <div class="selected-price" id="selectedPrice">0 ₽</div>
+            <h2 style="margin-bottom: 15px;">Ваш заказ:</h2>
+            <div style="background: #f0f8ff; padding: 15px; border-radius: 10px; margin-bottom: 20px;">
+                <p><strong id="selectedProduct">Букет не выбран</strong></p>
+                <p style="color: #ff6b6b; font-size: 24px; font-weight: bold;" id="selectedPrice">0 ₽</p>
             </div>
             
             <div class="form-group">
-                <label class="form-label">👤 Ваше имя *</label>
-                <input type="text" id="name" class="form-input" placeholder="Анна Петрова" required>
+                <label>👤 Ваше имя *</label>
+                <input type="text" id="name" placeholder="Анна Петрова" required>
             </div>
             
             <div class="form-group">
-                <label class="form-label">📱 Телефон *</label>
-                <input type="tel" id="phone" class="form-input" placeholder="+7 (900) 123-45-67" required>
+                <label>📱 Телефон *</label>
+                <input type="tel" id="phone" placeholder="+7 (999) 123-45-67" required>
             </div>
             
             <div class="form-group">
-                <label class="form-label">🏠 Адрес доставки *</label>
-                <input type="text" id="address" class="form-input" placeholder="ул. Примерная, д. 1, кв. 1" required>
+                <label>🏠 Адрес доставки *</label>
+                <input type="text" id="address" placeholder="ул. Цветочная, д. 1" required>
             </div>
             
             <div class="form-group">
-                <label class="form-label">💬 Комментарий к заказу</label>
-                <textarea id="comment" class="form-input" rows="3" placeholder="Пожелания, время доставки..."></textarea>
+                <label>💬 Комментарий (необязательно)</label>
+                <textarea id="comment" rows="3" placeholder="Пожелания к заказу..."></textarea>
             </div>
             
             <button class="submit-btn" onclick="submitOrder()" id="submitBtn">
@@ -375,375 +180,135 @@
     </div>
 
     <script>
-        // ==== КОНФИГУРАЦИЯ ====
-        // ЗАМЕНИТЕ ЭТИ ДАННЫЕ НА СВОИ!
-        const CONFIG = {
-            BOT_TOKEN: 'ВАШ_BOT_TOKEN', // Получите у @BotFather
-            ADMIN_ID: 'ВАШ_TELEGRAM_ID', // Ваш ID в Telegram
-            TEST_MODE: true // Поставьте false для продакшена
-        };
+        // ==== ПРОСТОЙ РАБОЧИЙ КОД ====
         
-        // ==== КАТАЛОГ БУКЕТОВ ====
+        // Каталог букетов
         const bouquets = [
-            {
-                id: 1,
-                name: 'Розовая нежность',
-                price: 2500,
-                emoji: '🌹',
-                color: 'linear-gradient(135deg, #ff9a9e 0%, #fad0c4 100%)',
-                description: '25 розовых роз с гипсофилой, идеально для романтического вечера'
-            },
-            {
-                id: 2,
-                name: 'Летний бриз', 
-                price: 1800,
-                emoji: '🌼',
-                color: 'linear-gradient(135deg, #a8e063 0%, #56ab2f 100%)',
-                description: 'Полевые цветы в эко-стиле: ромашки, васильки, колокольчики'
-            },
-            {
-                id: 3,
-                name: 'Королевский букет',
-                price: 3500,
-                emoji: '👑',
-                color: 'linear-gradient(135deg, #ffd166 0%, #ffb347 100%)',
-                description: 'Эксклюзивный букет с орхидеями, лилиями и эустомами'
-            },
-            {
-                id: 4,
-                name: 'Минимализм',
-                price: 1200,
-                emoji: '💐',
-                color: 'linear-gradient(135deg, #c3cfe2 0%, #f5f7fa 100%)',
-                description: 'Нежные белые эустомы в лаконичном оформлении'
-            },
-            {
-                id: 5,
-                name: 'Свадебный',
-                price: 4200,
-                emoji: '👰',
-                color: 'linear-gradient(135deg, #e0c3fc 0%, #8ec5fc 100%)',
-                description: 'Белые розы, пионы и гортензии для особого дня'
-            },
-            {
-                id: 6,
-                name: 'Для мамы',
-                price: 2200,
-                emoji: '❤️',
-                color: 'linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%)',
-                description: 'Яркие герберы и хризантемы в теплых тонах'
-            }
+            { id: 1, name: 'Розовая нежность', price: 2500, desc: '25 розовых роз', emoji: '🌹' },
+            { id: 2, name: 'Летний бриз', price: 1800, desc: 'Полевые цветы', emoji: '🌼' },
+            { id: 3, name: 'Королевский букет', price: 3500, desc: 'Орхидеи и лилии', emoji: '👑' },
+            { id: 4, name: 'Минимализм', price: 1200, desc: 'Белые эустомы', emoji: '💐' }
         ];
         
         let selectedBouquet = null;
-        let tg = null;
         
-        // ==== ИНИЦИАЛИЗАЦИЯ ====
-        document.addEventListener('DOMContentLoaded', () => {
-            // Проверяем, открыты ли в Telegram
-            if (window.Telegram?.WebApp) {
-                tg = window.Telegram.WebApp;
-                initTelegramApp();
-            } else {
-                console.log('🌐 Открыто в браузере');
-                showNotification('Тестовый режим. В Telegram будет работать лучше!', 'warning');
-            }
-            
-            loadBouquets();
-            setupEventListeners();
-        });
-        
-        // ==== ИНИЦИАЛИЗАЦИЯ TELEGRAM APP ====
-        function initTelegramApp() {
-            console.log('📱 Инициализация Telegram Mini App');
-            
-            // Раскрываем на весь экран
-            tg.expand();
-            
-            // Включаем подтверждение закрытия
-            tg.enableClosingConfirmation();
-            
-            // Устанавливаем цвета
-            tg.setHeaderColor('#ff6b6b');
-            tg.setBackgroundColor('#f9f0ff');
-            
-            // Настройка кнопки "Назад"
-            tg.BackButton.onClick(() => {
-                if (document.getElementById('orderForm').style.display === 'block') {
-                    showCatalog();
-                } else {
-                    tg.close();
-                }
-            });
-            
-            // Заполняем форму данными пользователя
-            if (tg.initDataUnsafe?.user) {
-                const user = tg.initDataUnsafe.user;
-                console.log('👤 Данные пользователя:', user);
-                
-                // Автозаполнение имени
-                if (user.first_name) {
-                    document.getElementById('name').value = 
-                        `${user.first_name} ${user.last_name || ''}`.trim();
-                }
-                
-                // Можно добавить username
-                if (user.username) {
-                    document.getElementById('comment').placeholder = 
-                        `@${user.username}, напишите пожелания к заказу...`;
-                }
-            }
-            
-            tg.ready(); // Сообщаем Telegram что готовы
-        }
-        
-        // ==== ЗАГРУЗКА КАТАЛОГА ====
-        function loadBouquets() {
+        // Загрузка каталога
+        function loadCatalog() {
             const grid = document.getElementById('flowersGrid');
+            grid.innerHTML = '';
             
-            if (bouquets.length === 0) {
-                grid.innerHTML = '<p style="text-align: center; color: #666;">Каталог временно пуст</p>';
-                return;
-            }
-            
-            bouquets.forEach(bouquet => {
+            bouquets.forEach(flower => {
                 const card = document.createElement('div');
                 card.className = 'flower-card';
-                card.onclick = () => selectBouquet(bouquet);
-                
                 card.innerHTML = `
-                    <div class="flower-image" style="background: ${bouquet.color};">
-                        ${bouquet.emoji}
-                    </div>
-                    <div class="flower-info">
-                        <div class="flower-name">${bouquet.name}</div>
-                        <div class="flower-desc">${bouquet.description}</div>
-                        <div class="flower-footer">
-                            <div class="flower-price">${bouquet.price.toLocaleString()} ₽</div>
-                            <button class="select-btn" onclick="event.stopPropagation(); selectBouquet(${JSON.stringify(bouquet).replace(/"/g, '&quot;')})">
-                                Выбрать
-                            </button>
-                        </div>
-                    </div>
+                    <div style="font-size: 40px; text-align: center; margin-bottom: 10px;">${flower.emoji}</div>
+                    <div class="flower-name">${flower.name}</div>
+                    <div class="flower-desc">${flower.desc}</div>
+                    <div class="flower-price">${flower.price} ₽</div>
+                    <button class="select-btn" onclick="selectBouquet(${flower.id})">Выбрать</button>
                 `;
-                
                 grid.appendChild(card);
             });
         }
         
-        // ==== ВЫБОР БУКЕТА ====
-        function selectBouquet(bouquet) {
-            selectedBouquet = bouquet;
+        // Выбор букета
+        function selectBouquet(id) {
+            selectedBouquet = bouquets.find(b => b.id === id);
             
-            // Обновляем информацию о выбранном товаре
-            document.getElementById('selectedProduct').textContent = bouquet.name;
-            document.getElementById('selectedPrice').textContent = bouquet.price.toLocaleString() + ' ₽';
+            document.getElementById('selectedProduct').textContent = selectedBouquet.name;
+            document.getElementById('selectedPrice').textContent = selectedBouquet.price + ' ₽';
             
             // Показываем форму, скрываем каталог
             document.getElementById('catalog').style.display = 'none';
             document.getElementById('orderForm').style.display = 'block';
-            
-            // Прокручиваем вверх
-            window.scrollTo(0, 0);
-            
-            // Показываем кнопку "Назад" в Telegram
-            if (tg) {
-                tg.BackButton.show();
-            }
         }
         
-        // ==== ВОЗВРАТ К КАТАЛОГУ ====
+        // Назад к каталогу
         function showCatalog() {
             document.getElementById('orderForm').style.display = 'none';
             document.getElementById('catalog').style.display = 'block';
-            window.scrollTo(0, 0);
-            
-            // Скрываем кнопку "Назад" в Telegram
-            if (tg) {
-                tg.BackButton.hide();
-            }
         }
         
-        // ==== ОТПРАВКА ЗАКАЗА ====
+        // Отправка заказа - ОБНОВИТЕ ЭТУ ССЫЛКУ!
         async function submitOrder() {
             if (!selectedBouquet) {
-                showNotification('Сначала выберите букет из каталога', 'warning');
+                alert('Сначала выберите букет!');
                 return;
             }
             
-            // Собираем данные формы
+            const name = document.getElementById('name').value;
+            const phone = document.getElementById('phone').value;
+            const address = document.getElementById('address').value;
+            const comment = document.getElementById('comment').value;
+            
+            if (!name || !phone || !address) {
+                alert('Заполните все поля!');
+                return;
+            }
+            
+            // Формируем данные заказа
             const orderData = {
-                name: document.getElementById('name').value.trim(),
-                phone: document.getElementById('phone').value.trim(),
-                address: document.getElementById('address').value.trim(),
-                comment: document.getElementById('comment').value.trim(),
-                product: selectedBouquet.name,
+                bouquet: selectedBouquet.name,
                 price: selectedBouquet.price,
-                emoji: selectedBouquet.emoji,
-                timestamp: new Date().toLocaleString('ru-RU'),
-                source: tg ? 'Telegram Mini App' : 'Браузер'
+                name: name,
+                phone: phone,
+                address: address,
+                comment: comment,
+                date: new Date().toLocaleString()
             };
             
-            // Валидация
-            if (!orderData.name || !orderData.phone || !orderData.address) {
-                showNotification('Заполните все обязательные поля', 'warning');
-                return;
-            }
+            // ⚠️ ВАЖНО: ЗАМЕНИТЕ ЭТУ ССЫЛКУ НА СВОЮ!
+            const API_URL = 'https://ваш-сервер.com/api/order';
             
-            // Проверка телефона (простая)
-            const phoneRegex = /^(\+7|7|8)?[\s\-]?\(?[0-9]{3}\)?[\s\-]?[0-9]{3}[\s\-]?[0-9]{2}[\s\-]?[0-9]{2}$/;
-            if (!phoneRegex.test(orderData.phone.replace(/\D/g, ''))) {
-                showNotification('Введите корректный номер телефона', 'warning');
-                return;
-            }
-            
-            // Показываем индикатор загрузки
             const btn = document.getElementById('submitBtn');
-            const originalText = btn.innerHTML;
             btn.disabled = true;
-            btn.innerHTML = '<span class="loader"></span> Отправляем...';
+            btn.innerHTML = '⏳ Отправляем...';
             
             try {
-                // Формируем сообщение для Telegram
-                const message = `🎉 *НОВЫЙ ЗАКАЗ!* ${orderData.emoji}
-
-*Букет:* ${orderData.product}
-*Цена:* ${orderData.price.toLocaleString()} ₽
-
-*Клиент:* ${orderData.name}
-*Телефон:* \`${orderData.phone}\`
-*Адрес:* ${orderData.address}
-*Комментарий:* ${orderData.comment || 'нет'}
-
-*Источник:* ${orderData.source}
-*Время:* ${orderData.timestamp}
-
-${CONFIG.TEST_MODE ? '⚠️ *ТЕСТОВЫЙ ЗАКАЗ*' : ''}`;
+                // Отправляем на сервер (это безопасно!)
+                const response = await fetch(API_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(orderData)
+                });
                 
-                if (CONFIG.TEST_MODE) {
-                    // Тестовый режим - просто показываем уведомление
-                    console.log('📦 Тестовый заказ:', orderData);
-                    console.log('📝 Сообщение:', message);
+                const result = await response.json();
+                
+                if (result.success) {
+                    showNotification('✅ Заказ оформлен! Мы скоро свяжемся.');
                     
+                    // Очищаем форму
                     setTimeout(() => {
-                        showNotification('✅ Тестовый заказ оформлен! (в продакшене отправится админу)', 'success');
-                        resetForm();
+                        document.getElementById('name').value = '';
+                        document.getElementById('phone').value = '';
+                        document.getElementById('address').value = '';
+                        document.getElementById('comment').value = '';
                         showCatalog();
-                    }, 1500);
-                    
-                } else if (CONFIG.BOT_TOKEN && CONFIG.ADMIN_ID) {
-                    // Продакшен - отправляем в Telegram
-                    const encodedMessage = encodeURIComponent(message);
-                    const url = `https://api.telegram.org/bot${CONFIG.BOT_TOKEN}/sendMessage?chat_id=${CONFIG.ADMIN_ID}&text=${encodedMessage}&parse_mode=Markdown`;
-                    
-                    const response = await fetch(url);
-                    const result = await response.json();
-                    
-                    if (result.ok) {
-                        showNotification('✅ Заказ успешно оформлен! Мы скоро свяжемся с вами.', 'success');
-                        
-                        // Закрываем приложение через 2 секунды
-                        setTimeout(() => {
-                            if (tg) {
-                                tg.close();
-                            } else {
-                                resetForm();
-                                showCatalog();
-                            }
-                        }, 2000);
-                        
-                    } else {
-                        throw new Error(result.description || 'Ошибка отправки в Telegram');
-                    }
+                    }, 2000);
                 } else {
-                    throw new Error('Не настроены BOT_TOKEN и ADMIN_ID');
+                    throw new Error(result.error);
                 }
                 
             } catch (error) {
-                console.error('❌ Ошибка:', error);
-                showNotification('❌ Ошибка при отправке заказа. Попробуйте позже.', 'error');
-                
+                showNotification('❌ Ошибка: ' + error.message);
             } finally {
-                // Восстанавливаем кнопку
                 btn.disabled = false;
-                btn.innerHTML = originalText;
+                btn.innerHTML = '🎉 Оформить заказ';
             }
         }
         
-        // ==== СБРОС ФОРМЫ ====
-        function resetForm() {
-            document.getElementById('name').value = '';
-            document.getElementById('phone').value = '';
-            document.getElementById('address').value = '';
-            document.getElementById('comment').value = '';
-            selectedBouquet = null;
-        }
-        
-        // ==== УВЕДОМЛЕНИЯ ====
-        function showNotification(message, type = 'info') {
-            // Удаляем старые уведомления
-            document.querySelectorAll('.notification').forEach(n => n.remove());
-            
+        // Уведомление
+        function showNotification(message) {
             const notification = document.createElement('div');
-            notification.className = `notification ${type}`;
+            notification.className = 'notification';
             notification.textContent = message;
-            
             document.body.appendChild(notification);
             
-            // Автоматическое скрытие
-            setTimeout(() => {
-                if (notification.parentNode) {
-                    notification.style.opacity = '0';
-                    notification.style.transform = 'translateX(100%)';
-                    setTimeout(() => notification.remove(), 300);
-                }
-            }, 4000);
+            setTimeout(() => notification.remove(), 3000);
         }
         
-        // ==== НАСТРОЙКА ОБРАБОТЧИКОВ СОБЫТИЙ ====
-        function setupEventListeners() {
-            // Подтверждение при закрытии страницы
-            window.addEventListener('beforeunload', (e) => {
-                if (document.getElementById('orderForm').style.display === 'block' && selectedBouquet) {
-                    e.preventDefault();
-                    e.returnValue = 'У вас есть неотправленный заказ. Вы уверены, что хотите уйти?';
-                    return e.returnValue;
-                }
-            });
-            
-            // Валидация телефона в реальном времени
-            document.getElementById('phone').addEventListener('input', function(e) {
-                let value = e.target.value.replace(/\D/g, '');
-                if (value.startsWith('7') || value.startsWith('8')) {
-                    value = value.substring(1);
-                }
-                
-                if (value.length > 0) {
-                    let formatted = '+7 (';
-                    if (value.length > 0) formatted += value.substring(0, 3);
-                    if (value.length > 3) formatted += ') ' + value.substring(3, 6);
-                    if (value.length > 6) formatted += '-' + value.substring(6, 8);
-                    if (value.length > 8) formatted += '-' + value.substring(8, 10);
-                    e.target.value = formatted;
-                }
-            });
-        }
-        
-        // ==== ВСПОМОГАТЕЛЬНЫЕ ФУНКЦИИ ДЛЯ ТЕСТА ====
-        window.testOrder = function() {
-            // Автозаполнение формы для теста
-            selectedBouquet = bouquets[0];
-            document.getElementById('name').value = 'Мария Иванова';
-            document.getElementById('phone').value = '+7 (999) 123-45-67';
-            document.getElementById('address').value = 'Москва, ул. Цветочная, д. 15, кв. 42';
-            document.getElementById('comment').value = 'Доставить после 18:00, пожалуйста';
-            
-            showNotification('Форма заполнена для теста!', 'success');
-        };
-        
-        window.checkConfig = function() {
-            alert(`Конфигурация:\n\nТокен бота: ${CONFIG.BOT_TOKEN ? '✅ Установлен' : '❌ Не установлен'}\nID администратора: ${CONFIG.ADMIN_ID ? '✅ Установлен' : '❌ Не установлен'}\nРежим: ${CONFIG.TEST_MODE ? 'Тестовый' : 'Продакшен'}`);
-        };
+        // Загружаем каталог при старте
+        window.onload = loadCatalog;
     </script>
 </body>
 </html>
